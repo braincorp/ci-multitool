@@ -1,0 +1,72 @@
+{
+    "steps": [
+      {
+        "op": "same",
+        "urn": "urn:pulumi:default::project-name::pulumi:pulumi:Stack::project-name-default"
+      },
+      {
+        "op": "create",
+        "urn": "urn:pulumi:default::project-name::Core$Misc$gcp:storage/bucket:Bucket::staging-map-components",
+        "provider": "urn:pulumi:default::project-name::pulumi:providers:gcp::default_6_23_0::b1974b6a-ec20-46aa-b66c-5d9657f307e5"
+      },
+      {
+        "op": "update",
+        "urn": "urn:pulumi:default::project-name::Core$SessionUser$gcp:cloudrun/service:Service::alex-session-user",
+        "provider": "urn:pulumi:default::project-name::pulumi:providers:gcp::default_6_23_0::b1974b6a-ec20-46aa-b66c-5d9657f307e5",
+        "diffReasons": [
+          "template"
+        ]
+      },
+      {
+        "op": "create",
+        "urn": "urn:pulumi:default::project-name::Core$Service1$gcp:storage/bucketIAMMember:BucketIAMMember::service1-staging-map-components-admin",
+        "provider": "urn:pulumi:default::project-name::pulumi:providers:gcp::default_6_23_0::b1974b6a-ec20-46aa-b66c-5d9657f307e5"
+      },
+      {
+        "op": "update",
+        "urn": "urn:pulumi:default::project-name::Core$Service1$kubernetes:apps/v1:Deployment::service1",
+        "provider": "urn:pulumi:default::project-name::pulumi:providers:kubernetes::autopilot::f529e4fb-3e8d-4c71-9b2f-a054614c9b6f",
+        "diffReasons": [
+          "spec"
+        ]
+      },
+      {
+        "op": "update",
+        "urn": "urn:pulumi:default::project-name::LoadBalancer$kubernetes:batch/v1:Job::wildcard-cert-sync-initial",
+        "provider": "urn:pulumi:default::project-name::pulumi:providers:kubernetes::autopilot::f529e4fb-3e8d-4c71-9b2f-a054614c9b6f",
+        "diffReasons": [
+          "spec"
+        ]
+      },
+      {
+        "op": "update",
+        "urn": "urn:pulumi:default::project-name::LoadBalancer$kubernetes:batch/v1beta1:CronJob::wildcard-cert-sync",
+        "provider": "urn:pulumi:default::project-name::pulumi:providers:kubernetes::autopilot::f529e4fb-3e8d-4c71-9b2f-a054614c9b6f",
+        "diffReasons": [
+          "spec"
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "urn": "urn:pulumi:default::project-name::Core$Service2$tls:index/selfSignedCert:SelfSignedCert::service2",
+        "message": "warning: urn:pulumi:default::project-name::Core$Service2$tls:index/selfSignedCert:SelfSignedCert::service2 verification warning: Argument is deprecated\n",
+        "severity": "warning"
+      },
+      {
+        "urn": "urn:pulumi:default::project-name::Core$Service1$tls:index/selfSignedCert:SelfSignedCert::service1",
+        "message": "warning: urn:pulumi:default::project-name::Core$Service1$tls:index/selfSignedCert:SelfSignedCert::service1 verification warning: Argument is deprecated\n",
+        "severity": "warning"
+      },
+      {
+        "message": "warning: service3 only works correctly on primary env\n",
+        "severity": "warning"
+      }
+    ],
+    "duration": 7812144614,
+    "changeSummary": {
+      "create": 2,
+      "same": 298,
+      "update": 4
+    }
+  }

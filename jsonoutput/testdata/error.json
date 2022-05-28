@@ -1,0 +1,29 @@
+{
+    "steps": [
+        {
+            "op": "same",
+            "urn": "urn:pulumi:default::project-name::pulumi:pulumi:Stack::project-name-default",
+            "oldState": {
+                "urn": "urn:pulumi:default::project-name::pulumi:pulumi:Stack::project-name-default",
+                "custom": false,
+                "type": "pulumi:pulumi:Stack"
+            },
+            "newState": {
+                "urn": "urn:pulumi:default::project-name::pulumi:pulumi:Stack::project-name-default",
+                "custom": false,
+                "type": "pulumi:pulumi:Stack"
+            },
+            "detailedDiff": null
+        }
+    ],
+    "diagnostics": [
+        {
+            "message": "error: Running program '/home/alex/workspace/github.com/corp/project-name/infrastructure-pulumi' failed with an unhandled exception:\nTSError: ⨯ Unable to compile TypeScript:\nindex.ts(392,1): error TS1005: '}' expected.\nindex.ts(162,16): error TS7030: Not all code paths return a value.\nindex.ts(386,49): error TS2339: Property 'info' does not exist on type '{ info: CommonInfo; apis: { core: string; portal: string; }; } | undefined'.\nindex.ts(386,55): error TS2339: Property 'apis' does not exist on type '{ info: CommonInfo; apis: { core: string; portal: string; }; } | undefined'.\n\n    at createTSError (/home/alex/workspace/github.com/corp/project-name/infrastructure-pulumi/node_modules/ts-node/src/index.ts:261:12)\n    at getOutput (/home/alex/workspace/github.com/corp/project-name/infrastructure-pulumi/node_modules/ts-node/src/index.ts:367:40)\n    at Object.compile (/home/alex/workspace/github.com/corp/project-name/infrastructure-pulumi/node_modules/ts-node/src/index.ts:558:11)\n    at Module.m._compile (/home/alex/workspace/github.com/corp/project-name/infrastructure-pulumi/node_modules/ts-node/src/index.ts:439:43)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1159:10)\n    at Object.require.extensions.\u003ccomputed\u003e [as .ts] (/home/alex/workspace/github.com/corp/project-name/infrastructure-pulumi/node_modules/ts-node/src/index.ts:442:12)\n    at Module.load (node:internal/modules/cjs/loader:981:32)\n    at Function.Module._load (node:internal/modules/cjs/loader:822:12)\n    at Module.require (node:internal/modules/cjs/loader:1005:19)\n    at require (node:internal/modules/cjs/helpers:102:18)\n",
+            "severity": "error"
+        }
+    ],
+    "duration": 4598581902,
+    "changeSummary": {
+        "same": 1
+    }
+}
