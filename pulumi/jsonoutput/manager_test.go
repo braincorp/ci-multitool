@@ -9,7 +9,6 @@ import (
 func TestNewManagerFromFile(t *testing.T) {
 	previewManager, err := NewManagerFromFile("testdata/preview-changes.json")
 	require.NoError(t, err)
-	previewManager.URNPrefix = "pulumi:default::project-name"
 
 	t.Log(previewManager.ShortSummaryString())
 

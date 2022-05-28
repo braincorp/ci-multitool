@@ -11,8 +11,10 @@ import (
 type Manager struct {
 	output *PulumiJSONOutput
 
-	URNPrefix string
+	urnPrefix string
 }
+
+const pulumiStackUrnIndicator = "::pulumi:pulumi:Stack"
 
 func NewManagerFromFile(path string) (*Manager, error) {
 	m := &Manager{
@@ -35,6 +37,14 @@ func NewManagerFromFile(path string) (*Manager, error) {
 		return nil, fmt.Errorf("unable to unmarshal: %w", err)
 	}
 
+	// detect urnPrefix
+	for _, step := range m.output.Steps {
+		if strings.Contains(step.Urn, pulumiStackUrnIndicator) {
+			parts := strings.Split(step.Urn, pulumiStackUrnIndicator)
+			m.urnPrefix = strings.TrimPrefix(parts[0], "urn:")
+		}
+	}
+
 	return m, nil
 }
 
@@ -54,7 +64,7 @@ func (m *Manager) ShortSummaryString() string {
 		return "unchanged"
 	}
 
-	// TODO replaced
+	// TODO replaced, deleted
 
 	var resParts []string
 	if changeSummary.Create != 0 {
@@ -72,7 +82,7 @@ func (m *Manager) ShortSummaryString() string {
 
 func (m *Manager) stripURN(urn string) string {
 	res := strings.TrimPrefix(urn, "urn:")
-	res = strings.TrimPrefix(res, m.URNPrefix)
+	res = strings.TrimPrefix(res, m.urnPrefix)
 	return strings.TrimPrefix(res, "::")
 }
 
@@ -97,7 +107,7 @@ func (m *Manager) urnParent(urn string) string {
 func (m *Manager) TreeString() string {
 	urnToNode := make(map[string]Tree)
 
-	tree := NewTree(m.URNPrefix)
+	tree := NewTree(m.urnPrefix)
 	urnToNode[""] = tree
 	for _, step := range m.output.Steps {
 		if step.Op == "same" {
@@ -121,6 +131,10 @@ func (m *Manager) TreeString() string {
 			if isLeaf {
 				parentNode.SetCol1(urnPart)
 				parentNode.SetCol2(step.Op)
+				if len(step.DiffReasons) > 0 {
+					reasons := strings.Join(step.DiffReasons, ", ")
+					parentNode.SetCol3(fmt.Sprintf("[diff: %s]", reasons))
+				}
 				break
 			}
 			node := parentNode.Add(urnPart)

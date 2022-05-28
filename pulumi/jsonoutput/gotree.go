@@ -108,7 +108,10 @@ func (t *tree) Text(includeColumns bool, col1Start int) string {
 		res += padding + truncateOrPad(t.col1, 20)
 	}
 	if includeColumns && t.col2 != "" {
-		res += "  " + t.col2
+		res += "  " + truncateOrPad(t.col2, 10)
+	}
+	if includeColumns && t.col3 != "" {
+		res += "  " + t.col3
 	}
 	return res
 }
