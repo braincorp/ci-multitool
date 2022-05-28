@@ -100,6 +100,9 @@ func (m *Manager) TreeString() string {
 	tree := NewTree(m.URNPrefix)
 	urnToNode[""] = tree
 	for _, step := range m.output.Steps {
+		if step.Op == "same" {
+			continue
+		}
 		strippedURN := m.stripURN(step.Urn)
 		urnParts := m.urnParts(strippedURN)
 		for i, urnPart := range urnParts {
@@ -116,39 +119,15 @@ func (m *Manager) TreeString() string {
 			}
 			isLeaf := len(urnParts)-1 == i
 			if isLeaf {
+				parentNode.SetCol1(urnPart)
+				parentNode.SetCol2(step.Op)
 				break
 			}
 			node := parentNode.Add(urnPart)
 			urnToNode[name] = node
 		}
 	}
-	/*
-		internalApps := tree.Add("InternalApps")
-		docs := internalApps.Add("Docs")
-		docs.Add("kubernetes:apps/v1:Deployment")
-	*/
-	res := tree.Print()
-
-	/*
-		maxLen := 0
-
-			scanner := bufio.NewScanner(strings.NewReader(res))
-			for scanner.Scan() {
-				l := utf8.RuneCountInString(scanner.Text())
-				if l > maxLen {
-					maxLen = l
-				}
-			}
-			nextLen := maxLen + 2
-
-			scanner = bufio.NewScanner(strings.NewReader(res))
-			for scanner.Scan() {
-				text := scanner.Text()
-				l := utf8.RuneCountInString(text)
-				paddingLen := nextLen - l
-				fmt.Printf("%s%s %s\n", text, strings.Repeat(" ", paddingLen), "asdf")
-			}
-	*/
+	res := tree.Print(true)
 
 	return res
 }

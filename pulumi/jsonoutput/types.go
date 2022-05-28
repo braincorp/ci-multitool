@@ -23,4 +23,5 @@ type PulumiJSONChangeSummary struct {
 	Create int `json:"create"`
 	Same   int `json:"same"`
 	Update int `json:"update"`
+	Delete int `json:"int"`
 }
