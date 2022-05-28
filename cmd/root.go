@@ -13,7 +13,7 @@ func init() {
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use: "multitool <command> [command-flags] [command-args]",
+	Use: "ci-multitool <command> [command-flags] [command-args]",
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

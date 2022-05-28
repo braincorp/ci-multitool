@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/alexgartner-bc/multitool/github"
+	"github.com/alexgartner-bc/ci-multitool/github"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )

@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/alexgartner-bc/multitool/github"
-	"github.com/alexgartner-bc/multitool/pulumi/jsonoutput"
+	"github.com/alexgartner-bc/ci-multitool/github"
+	"github.com/alexgartner-bc/ci-multitool/pulumi/jsonoutput"
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/slices"
 )

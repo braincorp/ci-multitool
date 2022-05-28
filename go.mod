@@ -1,4 +1,4 @@
-module github.com/alexgartner-bc/multitool
+module github.com/alexgartner-bc/ci-multitool
 
 go 1.18
 
