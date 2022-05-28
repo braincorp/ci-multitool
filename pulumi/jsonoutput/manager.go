@@ -51,33 +51,50 @@ func NewManagerFromFile(path string) (*Manager, error) {
 // ShortSummaryString returns short one line summary of the changes
 func (m *Manager) ShortSummaryString() string {
 	warningCount := 0
+	var resParts []string
 	for _, d := range m.output.Diagnostics {
 		if d.Severity == "error" {
-			return "error"
+			resParts = append(resParts, "error")
 		}
 		if d.Severity == "warning" {
 			warningCount++
 		}
 	}
 	changeSummary := m.output.ChangeSummary
-	if changeSummary.Create == 0 && changeSummary.Update == 0 {
-		return "unchanged"
-	}
-
-	// TODO replaced, deleted
-
-	var resParts []string
 	if changeSummary.Create != 0 {
-		resParts = append(resParts, fmt.Sprintf("created %d", changeSummary.Create))
+		resParts = append(resParts, fmt.Sprintf("create %d", changeSummary.Create))
+	}
+	if changeSummary.Delete != 0 {
+		resParts = append(resParts, fmt.Sprintf("delete %d", changeSummary.Delete))
+	}
+	if changeSummary.Replace != 0 {
+		resParts = append(resParts, fmt.Sprintf("replace %d", changeSummary.Replace))
 	}
 	if changeSummary.Update != 0 {
-		resParts = append(resParts, fmt.Sprintf("updated %d", changeSummary.Update))
+		resParts = append(resParts, fmt.Sprintf("update %d", changeSummary.Update))
+	}
+	if changeSummary.Same != 0 {
+		resParts = append(resParts, fmt.Sprintf("same %d", changeSummary.Same))
 	}
 	if warningCount != 0 {
 		resParts = append(resParts, fmt.Sprintf("warn %d", warningCount))
 	}
 
-	return strings.Join(resParts, " || ")
+	if len(resParts) == 0 {
+		return "unchanged"
+	}
+
+	return strings.Join(resParts, " | ")
+}
+
+// Error prints the error (if any)
+func (m *Manager) Error() string {
+	for _, d := range m.output.Diagnostics {
+		if d.Severity == "error" {
+			return d.Message
+		}
+	}
+	return ""
 }
 
 func (m *Manager) stripURN(urn string) string {

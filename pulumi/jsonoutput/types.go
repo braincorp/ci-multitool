@@ -20,8 +20,9 @@ type PulumiJSONDiagnostics struct {
 	Severity string `json:"severity"`
 }
 type PulumiJSONChangeSummary struct {
-	Create int `json:"create"`
-	Same   int `json:"same"`
-	Update int `json:"update"`
-	Delete int `json:"int"`
+	Create  int `json:"create"`
+	Delete  int `json:"delete"`
+	Replace int `json:"replace"`
+	Same    int `json:"same"`
+	Update  int `json:"update"`
 }

@@ -65,8 +65,10 @@
     ],
     "duration": 7812144614,
     "changeSummary": {
-      "create": 2,
-      "same": 298,
-      "update": 4
-    }
+      "create": 1,
+      "delete": 30,
+      "replace": 2,
+      "same": 264,
+      "update": 6
+  }
   }
