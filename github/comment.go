@@ -52,3 +52,39 @@ func CommentOnIssue(ctx context.Context, repo string, number int, text string, s
 	}
 	return nil
 }
+
+func CommentOnCommit(ctx context.Context, repo string, sha string, text string, stickyKey string) error {
+	client := getDefaultClient()
+
+	repoParts := strings.Split(repo, "/")
+
+	stickyKeyText := fmt.Sprintf("\n<!-- key %s -->\n", stickyKey)
+
+	text += stickyKeyText
+
+	commentReq := &github.RepositoryComment{
+		Body: &text,
+	}
+
+	// try to find existing comment
+	existingComments, _, err := client.Repositories.ListCommitComments(ctx, repoParts[0], repoParts[1], sha, nil)
+	if err != nil {
+		return fmt.Errorf("unable to list comments: %w", err)
+	}
+	for _, comment := range existingComments {
+		if strings.Contains(*comment.Body, stickyKeyText) {
+			// update existing comment
+			_, _, err = client.Repositories.UpdateComment(ctx, repoParts[0], repoParts[1], *comment.ID, commentReq)
+			if err != nil {
+				return fmt.Errorf("unable to edit comment: %w", err)
+			}
+			return nil
+		}
+	}
+
+	_, _, err = client.Repositories.CreateComment(ctx, repoParts[0], repoParts[1], sha, commentReq)
+	if err != nil {
+		return fmt.Errorf("unable to create comment: %w", err)
+	}
+	return nil
+}

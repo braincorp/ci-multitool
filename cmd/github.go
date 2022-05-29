@@ -14,6 +14,7 @@ import (
 var githubDefaultArgs = struct {
 	repo string
 	pr   int
+	sha  string
 	key  string
 }{}
 
@@ -31,6 +32,11 @@ func setGithubDefaultArgs(fs *pflag.FlagSet) {
 		&githubDefaultArgs.pr,
 		"pr", 0,
 		"number of the pr (1234)",
+	)
+	fs.StringVar(
+		&githubDefaultArgs.sha,
+		"sha", "",
+		"sha of the commit",
 	)
 	fs.StringVar(
 		&githubDefaultArgs.key,
@@ -65,34 +71,27 @@ var githubCommentCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 
-		var input io.ReadCloser
-		var err error
-		if args[0] == "-" {
-			input = os.Stdin
-		} else {
-			input, err = os.Open(args[0])
-			if err != nil {
-				return fmt.Errorf("cannot open file: %w", err)
-			}
-		}
-
-		body, err := io.ReadAll(input)
+		body, err := readFileOrStdin(args[0])
 		if err != nil {
 			return fmt.Errorf("unable to read file: %w", err)
 		}
+
+		key := githubDefaultArgs.key
 
 		repo := githubDefaultArgs.repo
 		if repo == "" {
 			return errors.New("repo must be set")
 		}
-		prNumber := githubDefaultArgs.pr
-		if prNumber == 0 {
-			return errors.New("pr must be set")
-		}
-		key := githubDefaultArgs.key
 
-		err = github.CommentOnIssue(ctx, repo, prNumber, string(body), key)
-		return err
+		sha := githubDefaultArgs.sha
+		prNumber := githubDefaultArgs.pr
+		if prNumber != 0 {
+			return github.CommentOnIssue(ctx, repo, prNumber, string(body), key)
+		} else if sha != "" {
+			return github.CommentOnCommit(ctx, repo, sha, string(body), key)
+		} else {
+			return errors.New("either --pr or --sha must be set")
+		}
 	},
 }
 
@@ -103,18 +102,7 @@ var githubPrTrailerCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 
-		var input io.ReadCloser
-		var err error
-		if args[0] == "-" {
-			input = os.Stdin
-		} else {
-			input, err = os.Open(args[0])
-			if err != nil {
-				return fmt.Errorf("cannot open file: %w", err)
-			}
-		}
-
-		body, err := io.ReadAll(input)
+		body, err := readFileOrStdin(args[0])
 		if err != nil {
 			return fmt.Errorf("unable to read file: %w", err)
 		}
@@ -132,4 +120,23 @@ var githubPrTrailerCmd = &cobra.Command{
 		err = github.SetPRTrailerDetails(ctx, repo, prNumber, githubPRTrailerArgs.summary, string(body), key)
 		return err
 	},
+}
+
+func readFileOrStdin(path string) ([]byte, error) {
+	var input io.ReadCloser
+	var err error
+	if path == "-" {
+		input = os.Stdin
+	} else {
+		input, err = os.Open(path)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	body, err := io.ReadAll(input)
+	if err != nil {
+		return nil, err
+	}
+	return body, nil
 }
