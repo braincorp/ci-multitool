@@ -17,7 +17,7 @@ ci-multitool pulumi jsonoutput pulumi/jsonoutput/testdata/preview-changes.json -
 echo asdf | ci-multitool github pr-trailer --repo alexgartner-bc/test --pr 3 --summary "my summary" -
 ```
 
-### stdin to gihub coment
+### stdin to gihub comment
 
 ```
 echo asdf | ci-multitool github comment --repo alexgartner-bc/test --pr 3 -
