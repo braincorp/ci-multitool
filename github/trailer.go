@@ -36,6 +36,7 @@ func SetPRTrailerDetails(ctx context.Context, repo string, number int, summary s
 	if err != nil {
 		return fmt.Errorf("unable to get PR: %w", err)
 	}
+	pr.MaintainerCanModify = nil
 
 	body := ""
 	if pr.Body != nil {
