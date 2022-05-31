@@ -8,6 +8,7 @@ import (
 )
 
 // SetPRTrailerDetails update the a PR and sets some text at the bottom. Might be better than a comment because it doesn't cause a notification.
+// If summary is set, use <details>. Else use <span>
 //
 // github.repository => repo (alexgartner-bc/my-repo)
 // github.event.issue.number => number
@@ -16,9 +17,20 @@ func SetPRTrailerDetails(ctx context.Context, repo string, number int, summary s
 
 	repoParts := strings.Split(repo, "/")
 
-	detailsOpeningTag := fmt.Sprintf("<details key=\"%s\">", stickyKey)
+	tag := "span"
+	if summary != "" {
+		tag = "details"
+	}
 
-	text := fmt.Sprintf("\n%s<summary>%s</summary>\n\n%s\n\n</details>", detailsOpeningTag, summary, details)
+	openingTag := fmt.Sprintf("<%s id=\"%s\">", tag, stickyKey)
+	closingTag := fmt.Sprintf("</%s>", tag)
+
+	summaryTag := ""
+	if summary != "" {
+		summaryTag = fmt.Sprintf("<summary>%s</summary>", summary)
+	}
+
+	text := fmt.Sprintf("\n%s%s\n\n%s\n\n%s", openingTag, summaryTag, details, closingTag)
 
 	pr, _, err := client.PullRequests.Get(ctx, repoParts[0], repoParts[1], number)
 	if err != nil {
@@ -30,8 +42,8 @@ func SetPRTrailerDetails(ctx context.Context, repo string, number int, summary s
 		body = *pr.Body
 	}
 
-	if strings.Contains(body, detailsOpeningTag) {
-		re := regexp.MustCompile(fmt.Sprintf("(?ms)%s.+?</details>", detailsOpeningTag))
+	if strings.Contains(body, openingTag) {
+		re := regexp.MustCompile(fmt.Sprintf("(?ms)\n%s.+?%s", openingTag, closingTag))
 		body = re.ReplaceAllString(body, text)
 	} else {
 		body += text
