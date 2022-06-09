@@ -152,6 +152,9 @@ func (m *Manager) TreeString() string {
 					reasons := strings.Join(step.DiffReasons, ", ")
 					parentNode.SetCol3(fmt.Sprintf("[diff: %s]", reasons))
 				}
+				// force the parent to be recreated so other resources of the same type
+				// will print separately
+				delete(urnToNode, parentName)
 				break
 			}
 			node := parentNode.Add(urnPart)
