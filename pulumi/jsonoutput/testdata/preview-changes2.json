@@ -1,0 +1,129 @@
+{
+  "steps": [
+    {
+      "op": "same",
+      "urn": "urn:pulumi:default::project-name::pulumi:pulumi:Stack::project-name-default"
+    },
+    {
+      "op": "read",
+      "urn": "urn:pulumi:default::project-name::Reporting$gcp:bigquery/dataset:Dataset::salesforceDataset",
+      "provider": "urn:pulumi:default::project-name::pulumi:providers:gcp::default_6_25_0::b9423873-f6d3-4460-8c5a-dfc1a4b996f2"
+    },
+    {
+      "op": "read",
+      "urn": "urn:pulumi:default::project-name::Reporting$gcp:bigquery/dataset:Dataset::dataEngDataset-rpt",
+      "provider": "urn:pulumi:default::project-name::pulumi:providers:gcp::default_6_25_0::b9423873-f6d3-4460-8c5a-dfc1a4b996f2"
+    },
+    {
+      "op": "update",
+      "urn": "urn:pulumi:default::project-name::Core$Lkp$kubernetes:batch/v1beta1:CronJob::bq-salesforce",
+      "provider": "urn:pulumi:default::project-name::pulumi:providers:kubernetes::autopilot::32ee767a-2355-4257-8383-c3ca6f57675a",
+      "diffReasons": [
+        "spec"
+      ]
+    },
+    {
+      "op": "replace",
+      "urn": "urn:pulumi:default::project-name::Core$Lkp$kubernetes:batch/v1:Job::lkp-refresh-sites",
+      "provider": "urn:pulumi:default::project-name::pulumi:providers:kubernetes::autopilot::32ee767a-2355-4257-8383-c3ca6f57675a",
+      "diffReasons": [
+        "spec"
+      ],
+      "replaceReasons": [
+        "spec.template.spec.containers[0].image"
+      ]
+    },
+    {
+      "op": "replace",
+      "urn": "urn:pulumi:default::project-name::Core$Lkp$kubernetes:batch/v1:Job::lkp-refresh-devices",
+      "provider": "urn:pulumi:default::project-name::pulumi:providers:kubernetes::autopilot::32ee767a-2355-4257-8383-c3ca6f57675a",
+      "diffReasons": [
+        "spec"
+      ],
+      "replaceReasons": [
+        "spec.template.spec.containers[0].image"
+      ]
+    },
+    {
+      "op": "replace",
+      "urn": "urn:pulumi:default::project-name::Core$Lkp$kubernetes:batch/v1:Job::bq-salesforce",
+      "provider": "urn:pulumi:default::project-name::pulumi:providers:kubernetes::autopilot::32ee767a-2355-4257-8383-c3ca6f57675a",
+      "diffReasons": [
+        "spec"
+      ],
+      "replaceReasons": [
+        "spec.template.spec.containers[0].image"
+      ]
+    },
+    {
+      "op": "replace",
+      "urn": "urn:pulumi:default::project-name::Core$Lkp$kubernetes:batch/v1:Job::lkp-refresh-routes",
+      "provider": "urn:pulumi:default::project-name::pulumi:providers:kubernetes::autopilot::32ee767a-2355-4257-8383-c3ca6f57675a",
+      "diffReasons": [
+        "spec"
+      ],
+      "replaceReasons": [
+        "spec.template.spec.containers[0].image"
+      ]
+    },
+    {
+      "op": "update",
+      "urn": "urn:pulumi:default::project-name::Core$Lkp$kubernetes:batch/v1beta1:CronJob::lkp-refresh-routes",
+      "provider": "urn:pulumi:default::project-name::pulumi:providers:kubernetes::autopilot::32ee767a-2355-4257-8383-c3ca6f57675a",
+      "diffReasons": [
+        "spec"
+      ]
+    },
+    {
+      "op": "update",
+      "urn": "urn:pulumi:default::project-name::Core$Lkp$kubernetes:batch/v1beta1:CronJob::lkp-refresh-sites",
+      "provider": "urn:pulumi:default::project-name::pulumi:providers:kubernetes::autopilot::32ee767a-2355-4257-8383-c3ca6f57675a",
+      "diffReasons": [
+        "spec"
+      ]
+    },
+    {
+      "op": "update",
+      "urn": "urn:pulumi:default::project-name::Core$Lkp$kubernetes:batch/v1beta1:CronJob::lkp-refresh-devices",
+      "provider": "urn:pulumi:default::project-name::pulumi:providers:kubernetes::autopilot::32ee767a-2355-4257-8383-c3ca6f57675a",
+      "diffReasons": [
+        "spec"
+      ]
+    },
+    {
+      "op": "update",
+      "urn": "urn:pulumi:default::project-name::Core$Lkp$kubernetes:batch/v1beta1:CronJob::lkp-refresh-orgs",
+      "provider": "urn:pulumi:default::project-name::pulumi:providers:kubernetes::autopilot::32ee767a-2355-4257-8383-c3ca6f57675a",
+      "diffReasons": [
+        "spec"
+      ]
+    },
+    {
+      "op": "replace",
+      "urn": "urn:pulumi:default::project-name::Core$Lkp$kubernetes:batch/v1:Job::lkp-refresh-orgs",
+      "provider": "urn:pulumi:default::project-name::pulumi:providers:kubernetes::autopilot::32ee767a-2355-4257-8383-c3ca6f57675a",
+      "diffReasons": [
+        "spec"
+      ],
+      "replaceReasons": [
+        "spec.template.spec.containers[0].image"
+      ]
+    },
+    {
+      "op": "read",
+      "urn": "urn:pulumi:default::project-name::Reporting$ReportingViews$gcp:bigquery/dataset:Dataset::reporting",
+      "provider": "urn:pulumi:default::project-name::pulumi:providers:gcp::default_6_25_0::b9423873-f6d3-4460-8c5a-dfc1a4b996f2"
+    },
+    {
+      "op": "read",
+      "urn": "urn:pulumi:default::project-name::Reporting$ReportingViews$gcp:bigquery/dataset:Dataset::reporting_raw",
+      "provider": "urn:pulumi:default::project-name::pulumi:providers:gcp::default_6_25_0::b9423873-f6d3-4460-8c5a-dfc1a4b996f2"
+    }
+  ],
+  "duration": 29477903221,
+  "changeSummary": {
+    "replace": 5,
+    "same": 1035,
+    "update": 5
+  }
+}

@@ -127,7 +127,7 @@ func (m *Manager) TreeString() string {
 	tree := NewTree(m.urnPrefix)
 	urnToNode[""] = tree
 	for _, step := range m.output.Steps {
-		if step.Op == "same" {
+		if step.Op == "same" || step.Op == "read" {
 			continue
 		}
 		strippedURN := m.stripURN(step.Urn)

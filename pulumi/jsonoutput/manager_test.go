@@ -19,3 +19,12 @@ func TestNewManagerFromFile(t *testing.T) {
 
 	t.Log(errorManager.ShortSummaryString())
 }
+
+func TestNewManagerFromFile2(t *testing.T) {
+	previewManager, err := NewManagerFromFile("testdata/preview-changes2.json")
+	require.NoError(t, err)
+
+	t.Log(previewManager.ShortSummaryString())
+
+	t.Log(previewManager.TreeString())
+}
