@@ -12,6 +12,9 @@ func init() {
 	fs.String("project", "", "bigquery project")
 	fs.String("dataset", "", "bigquery dataset")
 	fs.String("table", "", "bigquery table")
+	fs.String("branch", "", "branch name")
+	fs.String("env", "", "environment")
+	fs.String("commit", "", "commit hash")
 }
 
 var gotest2bqCmd = &cobra.Command{
@@ -27,8 +30,20 @@ var gotest2bqCmd = &cobra.Command{
 			return errors.New("project, dataset, and table are required")
 		}
 
+		branch, _ := cmd.Flags().GetString("branch")
+		env, _ := cmd.Flags().GetString("env")
+		commit, _ := cmd.Flags().GetString("commit")
+
 		filename := args[0]
-		err := gotest2bq.GoTest2BQ(filename, project, dataset, table)
+		err := gotest2bq.GoTest2BQ(gotest2bq.GoTest2BQArgs{
+			Branch:   branch,
+			Env:      env,
+			Commit:   commit,
+			Filename: filename,
+			Project:  project,
+			Dataset:  dataset,
+			Table:    table,
+		})
 		if err != nil {
 			return err
 		}

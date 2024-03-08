@@ -9,9 +9,14 @@ import (
 	"time"
 
 	"cloud.google.com/go/bigquery"
+	"github.com/google/uuid"
 )
 
 type TestEvent struct {
+	Branch  string    `bigquery:"branch"`
+	Env     string    `bigquery:"env"`
+	Commit  string    `bigquery:"commit"`
+	GroupId string    `bigquery:"group_id"`
 	Time    time.Time `bigquery:"time"`
 	Action  string    `bigquery:"action"`
 	Package string    `bigquery:"package"`
@@ -20,10 +25,10 @@ type TestEvent struct {
 	Output  string    `bigquery:"-"`
 }
 
-func loadTestLog(filename string) ([]*TestEvent, error) {
+func loadTestLog(args GoTest2BQArgs) ([]*TestEvent, error) {
 	testEvents := make([]*TestEvent, 0)
 
-	file, err := os.Open(filename)
+	file, err := os.Open(args.Filename)
 	if err != nil {
 		return nil, err
 	}
@@ -37,6 +42,10 @@ func loadTestLog(filename string) ([]*TestEvent, error) {
 		if err != nil {
 			return nil, err
 		}
+		testEvent.Branch = args.Branch
+		testEvent.Env = args.Env
+		testEvent.Commit = args.Commit
+		testEvent.GroupId = args.groupId
 		testEvents = append(testEvents, testEvent)
 	}
 
@@ -47,14 +56,27 @@ func loadTestLog(filename string) ([]*TestEvent, error) {
 	return testEvents, nil
 }
 
-func GoTest2BQ(filename string, project string, dataset string, tableName string) error {
+type GoTest2BQArgs struct {
+	Branch   string
+	Env      string
+	Commit   string
+	Filename string
+	Project  string
+	Dataset  string
+	Table    string
+	groupId  string
+}
+
+func GoTest2BQ(args GoTest2BQArgs) error {
 	ctx := context.Background()
 
-	testEvents, err := loadTestLog(filename)
+	args.groupId = uuid.NewString()
+
+	testEvents, err := loadTestLog(args)
 	if err != nil {
 		return fmt.Errorf("load test log: %w", err)
 	}
-	client, err := bigquery.NewClient(ctx, project)
+	client, err := bigquery.NewClient(ctx, args.Project)
 	if err != nil {
 		return fmt.Errorf("bigquery client: %w", err)
 	}
@@ -64,7 +86,7 @@ func GoTest2BQ(filename string, project string, dataset string, tableName string
 		return fmt.Errorf("infer schema: %w", err)
 	}
 	schema = schema.Relax()
-	table := client.Dataset(dataset).Table(tableName)
+	table := client.Dataset(args.Dataset).Table(args.Table)
 
 	tm, err := table.Metadata(ctx)
 	if err != nil {
