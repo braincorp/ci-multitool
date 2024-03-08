@@ -9,6 +9,7 @@ import (
 func init() {
 	rootCmd.AddCommand(pulumiCmd)
 	rootCmd.AddCommand(githubCmd)
+	rootCmd.AddCommand(gotest2bqCmd)
 }
 
 // rootCmd represents the base command when called without any subcommands
