@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 	"os"
 
 	"github.com/alexgartner-bc/ci-multitool/jira"
@@ -89,7 +90,7 @@ var jiraCreateIssueCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		cmd.Println(key)
+		fmt.Println(key)
 		return nil
 	},
 }
