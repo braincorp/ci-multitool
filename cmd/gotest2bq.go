@@ -2,6 +2,9 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
+	"os"
+	"time"
 
 	"github.com/alexgartner-bc/ci-multitool/gotest2bq"
 	"github.com/spf13/cobra"
@@ -35,7 +38,7 @@ var gotest2bqCmd = &cobra.Command{
 		commit, _ := cmd.Flags().GetString("commit")
 
 		filename := args[0]
-		err := gotest2bq.GoTest2BQ(gotest2bq.GoTest2BQArgs{
+		goTest2BqArgs := gotest2bq.GoTest2BQArgs{
 			Branch:   branch,
 			Env:      env,
 			Commit:   commit,
@@ -43,10 +46,17 @@ var gotest2bqCmd = &cobra.Command{
 			Project:  project,
 			Dataset:  dataset,
 			Table:    table,
-		})
-		if err != nil {
-			return err
 		}
-		return nil
+		// the bigquery api is very eventually consistent. You will often get a 404 after creating or updating a table.
+		var err error
+		for i := 0; i < 3; i++ {
+			err = gotest2bq.GoTest2BQ(goTest2BqArgs)
+			if err == nil {
+				break
+			}
+			fmt.Fprintf(os.Stderr, "got error, will retry: %v\n", err)
+			time.Sleep(time.Second * 2)
+		}
+		return err
 	},
 }
