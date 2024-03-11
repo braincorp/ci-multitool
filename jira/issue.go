@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	gojira "github.com/andygrunwald/go-jira"
 )
@@ -27,6 +28,14 @@ func CreateIssue(args *CreateIssueArgs) (string, error) {
 	customFields := make(map[string]interface{})
 	for k, v := range args.CustomFields {
 		customFields[k] = v
+	}
+
+	if args.Type == "Auto" {
+		if strings.Contains(strings.ToLower(args.Summary), "fix") {
+			args.Type = "Bug"
+		} else {
+			args.Type = "Task"
+		}
 	}
 
 	issue := &gojira.Issue{
