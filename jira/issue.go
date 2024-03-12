@@ -53,11 +53,13 @@ func CreateIssue(args *CreateIssueArgs) (string, error) {
 		},
 	}
 
-	users, _, err := client.User.Find(args.Assignee)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error finding user: %v\n", err)
-	} else {
-		issue.Fields.Assignee = &users[0]
+	if args.Assignee != "" {
+		users, _, err := client.User.Find(args.Assignee)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error finding user: %v\n", err)
+		} else {
+			issue.Fields.Assignee = &users[0]
+		}
 	}
 
 	issue, resp, err := client.Issue.Create(issue)
