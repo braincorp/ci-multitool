@@ -69,3 +69,33 @@ func CreateIssue(args *CreateIssueArgs) (string, error) {
 	}
 	return issue.Key, nil
 }
+
+func GetActiveSprint(commonArgs *CommonArgs) (*gojira.Sprint, error) {
+	client, err := GetClient(commonArgs)
+	if err != nil {
+		return nil, fmt.Errorf("get client: %w", err)
+	}
+
+	sprints, _, err := client.Board.GetAllSprintsWithOptions(commonArgs.Board, &gojira.GetAllSprintsOptions{
+		State: "active",
+	})
+	if err != nil {
+		return nil, err
+	}
+	for _, sprint := range sprints.Values {
+		if sprint.State == "active" {
+			return &sprint, nil
+		}
+	}
+	return nil, fmt.Errorf("no active sprint found")
+}
+
+func AddIssueToSprint(commonArgs *CommonArgs, issueID string, sprintID int) error {
+	client, err := GetClient(commonArgs)
+	if err != nil {
+		return fmt.Errorf("get client: %w", err)
+	}
+
+	_, err = client.Sprint.MoveIssuesToSprint(sprintID, []string{issueID})
+	return err
+}

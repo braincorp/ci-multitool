@@ -9,6 +9,7 @@ type CommonArgs struct {
 	Project     string
 	User        string
 	Password    string
+	Board       int
 }
 
 func GetClient(args *CommonArgs) (*gojira.Client, error) {
