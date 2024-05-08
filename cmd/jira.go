@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	jira "github.com/alexgartner-bc/ci-multitool/jira"
+	"github.com/alexgartner-bc/ci-multitool/jira"
 	"github.com/spf13/cobra"
 )
 
