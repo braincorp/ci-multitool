@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/alexgartner-bc/ci-multitool/jira"
 	"github.com/spf13/cobra"
@@ -16,6 +17,7 @@ func init() {
 	jiraCmdF.String("project", os.Getenv("JIRA_PROJECT"), "project")
 	jiraCmdF.String("user", os.Getenv("JIRA_USER"), "user")
 	jiraCmdF.String("password", os.Getenv("JIRA_PASSWORD"), "password/token")
+	jiraCmdF.String("board", os.Getenv("JIRA_BOARD"), "board id num (optional)")
 
 	jiraCreateIssueCmdF := jiraCreateIssueCmd.Flags()
 	jiraCreateIssueCmdF.StringP("summary", "s", "", "issue summary/title")
@@ -48,12 +50,30 @@ func getCommonArgs(cmd *cobra.Command) (*jira.CommonArgs, error) {
 	if password == "" {
 		return nil, errors.New("password is required")
 	}
+	// board is optional
+	board, _ := cmd.Flags().GetString("board")
+	boardInt, err := convertBoardToInt(board)
+	if err != nil {
+		return nil, err
+	}
 	return &jira.CommonArgs{
 		InstanceUrl: instanceUrl,
 		Project:     project,
 		User:        user,
 		Password:    password,
+		Board:       boardInt,
 	}, nil
+}
+
+func convertBoardToInt(board string) (int, error) {
+	if board == "" {
+		return 0, nil
+	}
+	boardInt, err := strconv.Atoi(board)
+	if err != nil {
+		return 0, errors.New("board must be an integer")
+	}
+	return boardInt, nil
 }
 
 var jiraCreateIssueCmd = &cobra.Command{
@@ -91,6 +111,18 @@ var jiraCreateIssueCmd = &cobra.Command{
 			return err
 		}
 		fmt.Println(key)
+
+		// If board was given, get the active sprint ID and add issue to sprint
+		if commonArgs.Board != 0 {
+			sprint, err := jira.GetActiveSprint(commonArgs)
+			if err != nil {
+				return err
+			}
+			err = jira.AddIssueToSprint(commonArgs, key, sprint.ID)
+			if err != nil {
+				return err
+			}
+		}
 		return nil
 	},
 }
