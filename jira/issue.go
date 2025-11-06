@@ -17,6 +17,7 @@ type CreateIssueArgs struct {
 	Type         string
 	Labels       []string
 	CustomFields map[string]string
+	Components   []string
 }
 
 func CreateIssue(args *CreateIssueArgs) (string, error) {
@@ -51,6 +52,19 @@ func CreateIssue(args *CreateIssueArgs) (string, error) {
 			Labels:      args.Labels,
 			Unknowns:    customFields,
 		},
+	}
+
+	if len(args.Components) > 0 {
+		components := make([]*gojira.Component, 0, len(args.Components))
+		for _, name := range args.Components {
+			if name == "" {
+				continue
+			}
+			components = append(components, &gojira.Component{Name: name})
+		}
+		if len(components) > 0 {
+			issue.Fields.Components = components
+		}
 	}
 
 	if args.Assignee != "" {

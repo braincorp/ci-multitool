@@ -24,6 +24,7 @@ func init() {
 	jiraCreateIssueCmdF.StringP("type", "t", "", "issue type")
 	jiraCreateIssueCmdF.StringSliceP("labels", "l", []string{}, "issue labels")
 	jiraCreateIssueCmdF.StringToString("custom", map[string]string{}, "issue custom fields")
+	jiraCreateIssueCmdF.StringSlice("component", []string{}, "issue component (repeatable)")
 }
 
 var jiraCmd = &cobra.Command{
@@ -77,6 +78,7 @@ var jiraCreateIssueCmd = &cobra.Command{
 		}
 		labels, _ := cmd.Flags().GetStringSlice("labels")
 		customFields, _ := cmd.Flags().GetStringToString("custom")
+		components, _ := cmd.Flags().GetStringSlice("component")
 
 		key, err := jira.CreateIssue(&jira.CreateIssueArgs{
 			Common:       commonArgs,
@@ -86,6 +88,7 @@ var jiraCreateIssueCmd = &cobra.Command{
 			Type:         issueType,
 			Labels:       labels,
 			CustomFields: customFields,
+			Components:   components,
 		})
 		if err != nil {
 			return err
