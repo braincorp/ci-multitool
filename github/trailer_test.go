@@ -70,7 +70,8 @@ func TestSetPRTrailerDetailsPatchesBodyOnly(t *testing.T) {
 }
 
 // TestSetPRTrailerDetailsReplacesExistingTrailer makes sure a second run
-// replaces the trailer instead of appending another one.
+// replaces the trailer instead of appending another one. The details hold a $
+// because pulumi output does, and a regexp replacement expands $name.
 func TestSetPRTrailerDetailsReplacesExistingTrailer(t *testing.T) {
 	var patched map[string]any
 
@@ -92,13 +93,15 @@ func TestSetPRTrailerDetailsReplacesExistingTrailer(t *testing.T) {
 
 	client := newTestClient(t, handler)
 
-	err := setPRTrailerDetails(context.Background(), client, "braincorp/titanium", 1, "new summary", "new details", "pulumi-preview")
+	details := "new details $secret ${braces} $1"
+
+	err := setPRTrailerDetails(context.Background(), client, "braincorp/titanium", 1, "new summary", details, "pulumi-preview")
 	require.NoError(t, err)
 
 	body, ok := patched["body"].(string)
 	require.True(t, ok)
 	require.NotContains(t, body, "old details")
-	require.Contains(t, body, "new details")
+	require.Contains(t, body, details)
 	require.Equal(t, 1, countSubstring(body, `<details id="pulumi-preview">`))
 }
 

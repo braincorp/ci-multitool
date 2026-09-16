@@ -45,12 +45,12 @@ func setPRTrailerDetails(ctx context.Context, client *github.Client, repo string
 
 	if strings.Contains(body, openingTag) {
 		re := regexp.MustCompile(fmt.Sprintf("(?ms)\n%s.+?%s", openingTag, closingTag))
-		body = re.ReplaceAllString(body, text)
+		body = re.ReplaceAllLiteralString(body, text)
 	} else {
 		body += text
 	}
 
-	// Send only the body. 
+	// Send only the body.
 	_, _, err = client.PullRequests.Edit(ctx, repoParts[0], repoParts[1], number, &github.PullRequest{Body: &body})
 	if err != nil {
 		return fmt.Errorf("unable to edit PR: %w", err)
