@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+
+	"github.com/google/go-github/v45/github"
 )
 
 // SetPRTrailerDetails update the a PR and sets some text at the bottom. Might be better than a comment because it doesn't cause a notification.
@@ -13,8 +15,10 @@ import (
 // github.repository => repo (alexgartner-bc/my-repo)
 // github.event.issue.number => number
 func SetPRTrailerDetails(ctx context.Context, repo string, number int, summary string, details string, stickyKey string) error {
-	client := getDefaultClient()
+	return setPRTrailerDetails(ctx, getDefaultClient(), repo, number, summary, details, stickyKey)
+}
 
+func setPRTrailerDetails(ctx context.Context, client *github.Client, repo string, number int, summary string, details string, stickyKey string) error {
 	repoParts := strings.Split(repo, "/")
 
 	tag := "span"
@@ -36,23 +40,18 @@ func SetPRTrailerDetails(ctx context.Context, repo string, number int, summary s
 	if err != nil {
 		return fmt.Errorf("unable to get PR: %w", err)
 	}
-	pr.MaintainerCanModify = nil
 
-	body := ""
-	if pr.Body != nil {
-		body = *pr.Body
-	}
+	body := pr.GetBody()
 
 	if strings.Contains(body, openingTag) {
 		re := regexp.MustCompile(fmt.Sprintf("(?ms)\n%s.+?%s", openingTag, closingTag))
-		body = re.ReplaceAllString(body, text)
+		body = re.ReplaceAllLiteralString(body, text)
 	} else {
 		body += text
 	}
 
-	pr.Body = &body
-
-	_, _, err = client.PullRequests.Edit(ctx, repoParts[0], repoParts[1], number, pr)
+	// Send only the body.
+	_, _, err = client.PullRequests.Edit(ctx, repoParts[0], repoParts[1], number, &github.PullRequest{Body: &body})
 	if err != nil {
 		return fmt.Errorf("unable to edit PR: %w", err)
 	}
