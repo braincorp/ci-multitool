@@ -50,9 +50,7 @@ func setPRTrailerDetails(ctx context.Context, client *github.Client, repo string
 		body += text
 	}
 
-	// Send only the body. go-github derives the PATCH payload from the struct it
-	// gets, so a PR read back from the API also carries its base branch, and
-	// GitHub rejects a base field on a PR that is part of a stack.
+	// Send only the body. 
 	_, _, err = client.PullRequests.Edit(ctx, repoParts[0], repoParts[1], number, &github.PullRequest{Body: &body})
 	if err != nil {
 		return fmt.Errorf("unable to edit PR: %w", err)
